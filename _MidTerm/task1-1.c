@@ -34,10 +34,11 @@ void printList(){
     }
 }
 int main(){
+	int reval = SUCESS;
     FILE *fin = fopen("PhoneBook.txt", "r");
     if (fin == NULL){
         printf("Cannot open file!");
-        return 0;
+        reval = FAIL;
     }
     while (!feof(fin)){
         fscanf(fin, "%s %s %s", &PhoneArr[count].name, &PhoneArr[count].phone, &PhoneArr[count].email);
@@ -47,7 +48,8 @@ int main(){
 
     char key_name[20], choice = 'y';
     int found = -1, i;
-   
+   	
+   	while(choice == 'y'){
         printf("Nhap ten can tim: "); fflush(stdin); gets(key_name);
         found =  binSearch(0, 9, key_name);
         FILE *fout = fopen("PhoneBookout.txt", "a");
@@ -56,12 +58,14 @@ int main(){
             printf("Success!\n");
             fprintf(fout, "Found record:\nName: %s\nPhone: %s\nEmail: %s\n\n", PhoneArr[found].name, PhoneArr[found].phone, PhoneArr[found].email);
             fclose(fout);
-            PhoneBook temp = PhoneArr[found];
-            for ( i = found ; i >= 1; i--){
-                PhoneArr[i] = PhoneArr[i-1];
+        PhoneBook temp = PhoneArr[found];
+        for( i = found ; i >= 1; i--){
+            PhoneArr[i] = PhoneArr[i-1];
             }
             PhoneArr[0] = temp;
             printList();
         }
         printf("Ban co muon tiep tuc tim kiem (y/n): "); scanf("%c", &choice);
     }
+    return reval;
+}
