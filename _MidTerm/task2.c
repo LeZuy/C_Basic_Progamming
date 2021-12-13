@@ -1,4 +1,5 @@
 #include<stdio.h>       
+#include<stdlib.h>
 #include<string.h>
 #include<stdbool.h>
 
@@ -27,7 +28,7 @@ void push(char item){
 char pop(){
 	char val ;
 	if(isEmpty(top)){
-		printf("Stack empty!");
+		printf("\nStack empty!");
 	}
 	else{
 		val = stack[top];
@@ -37,8 +38,8 @@ char pop(){
 }
 
 bool isOp(char val){
-	if(val == '*' || val == '/' ||val == '+' || val =='-')return true;
-	else return false;
+	if(val == '*' || val == '/' ||val == '+' || val =='-')return 0;
+	else return 1;
 }
 
 int ttuutien(char op){
@@ -50,37 +51,90 @@ int ttuutien(char op){
 void InfixToPostfix(char infix[], char postfix[]){ 
 	int i=0, j=0;
 	char item, x;    
-	
 	for(i=0; i<=strlen(infix); i++){
 		item = infix[i];
-		printf(" %c", item);
-		if( !isOp(item)){
+		if( isOp(item)==1){
 			postfix[j] = item;
 			j++;
 		}
-		if(isOp(item)){
-			printf(" %c", stack[top]);
-			if(ttuutien(item)<ttuutien(stack[top])){
-				push(item);
-				j++;
-			}
-			else{
-				postfix[j] = item;
-				while(!isEmpty(top)){
-					postfix[j] = pop();
+		if( isOp(item)==0){
+			while(ttuutien(item) <ttuutien(stack[top])){
+					postfix[j] = pop();	
 					j++;
-				}
-			}
+					}
+			push(item);
+		}
+		
+	}
+		while(!isEmpty(top)){
+			x = pop();
+			postfix[j] = x;
+			j++;
+		}
+	
+}
+int chartoint(char item){
+	int val;
+	val = item - '0';
+	return val;
+}
+int inttochar(int val){
+	char item;
+	item = val + '0';
+	return item;
+}
+int doOp(int n1, int n2, char op){
+	int ans;
+	switch(op){
+		case '+': ans = n1 + n2;
+		break;
+		case '-': ans = n1 - n2;
+		break;
+		case '*': ans = n1 * n2;
+		break;
+		case '/': ans = n1 / n2;
+		break;
+	}
+	return ans;
+}
+
+
+char Eval(char postfix[]){
+	int j, n1, n2, ans;
+	char x, result;
+	for(j = 0; j<=strlen(postfix); j++){
+		x = postfix[j];
+		if(!isOp(x)){
+			push(x);
+		}
+		else{
+			n1 = chartoint(pop());
+			n1 = chartoint(pop());
+			ans = doOp(n1,n2, x);
+			result = inttochar(ans);
+			push(result);
 		}
 	}
+	return pop();
 }
-int main()
-{
-	char infix[SIZE], postfix[SIZE];    
+	
+
+int main(){
+	int j,i ;
+	char infix[100];
+	char postfix[100];    
 	printf("\nEnter string : ");
 	fflush(stdin); gets(infix);
+	fflush(stdin);
+ 
+	printf("%d", strlen(postfix));
 	InfixToPostfix(infix, postfix);                   
 	printf("Postfix notation : ");
-	printf(" %s", postfix);                    
+	
+	for(i=0; i<=strlen(infix); i++){
+		printf(" %c", postfix[i]);         
+		}
+	printf(" %c", Eval(postfix));	
+	
 	return 0;
 }

@@ -28,7 +28,8 @@ void Dequeue(int *front){
 int main(){
     FILE *fp ;
     PhoneBook val;
-    
+    int j;
+
     if((fp = fopen("PhoneBook.txt", "r")) == NULL){
         printf("Cannot open file\n");
         reval = FAIL;
@@ -54,8 +55,11 @@ int main(){
     Enqueue(&rear, val);
     
     printf("%-20s %-10s %-20s\n", "Name", "PhoneNum", "Email");
-    for (i = front; i <= rear; i = (i + 1)%10){
+    
+//   i = front;
+    for (j = 0; j<10; j++){
         printf("%-20s %-10s %-20s\n", Queue[i].name, Queue[i].phone, Queue[i].email);
+        i = (i + 1)%10;
     }
     fclose(fp);
     
