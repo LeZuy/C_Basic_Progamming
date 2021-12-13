@@ -56,8 +56,8 @@ int main(){
     
     printf("%-20s %-10s %-20s\n", "Name", "PhoneNum", "Email");
     
-//   i = front;
-    for (j = 0; j<10; j++){
+//    i = front;
+    for(i = front, j = 0; j < 10; j++){
         printf("%-20s %-10s %-20s\n", Queue[i].name, Queue[i].phone, Queue[i].email);
         i = (i + 1)%10;
     }
