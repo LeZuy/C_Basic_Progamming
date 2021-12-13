@@ -1,0 +1,18 @@
+Name: B
+Telephone number: 2
+Email address: b@02
+Found record:
+Name: C
+Phone: 3
+Email: c@03
+
+Found record:
+Name: B
+Phone: 2
+Email: b@02
+
+Found record:
+Name: B
+Phone: 2
+Email: b@02
+
