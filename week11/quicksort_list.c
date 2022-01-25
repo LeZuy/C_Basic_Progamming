@@ -19,11 +19,11 @@ void swap(Phonebook *a, Phonebook *b){
 	*b = temp;
 }
 
-int partition(Phonebook a[], int l, int r){
+int partition(Phonebook a[], int l, int r){			// Phan hoach Hoare
 	Phonebook p = a[l];
 	int i = l - 1;
 	int j = r + 1;
-	while(1){
+	while(1){										
 		do{ 
 			++i;
 		}while(strcmp(a[i].Name, p.Name)<0);
@@ -46,10 +46,24 @@ void quick_sort(Phonebook a[], int l, int r){
 	quick_sort(a, p+1, r );
 }
 
+void printList(Phonebook a[], int n,  FILE *fp){
+	for(int i=0; i<=n; i++){
+		printf("\n %-20s", a[i].Name);
+		fprintf(fp,"\n %-20s", a[i].Name);
+		
+		printf(" %-10s", a[i].Phone);
+		fprintf(fp," %-10s", a[i].Phone);
+		
+		printf(" %-20s", a[i].Email);
+		fprintf(fp," %-20s", a[i].Email);
+	}
+}
+
 int main(){
 	FILE *fin, *fout;
 	Phonebook list[MAXSIZE];
 	int reval;
+	
 	
 	fin = fopen("Phonebook.txt", "r");
 	if(fin == NULL){
@@ -67,6 +81,7 @@ int main(){
 	reval = SUCESS;
 }
 	fclose(fin);
+	
 	fout = fopen("Phonebookout.txt", "w");
 	if(fout = NULL){
 		printf("Cannot open output file");
@@ -82,7 +97,9 @@ int main(){
 		reval = SUCESS;	
 		}
 	}
+
 	quick_sort(list, 0, 9);
+
 	printf("\n------------Sap xep nhanh-------------");
 	for(int i =0; i<=9; i++){
 		printf("\n %-20s", list[i].Name);
@@ -92,14 +109,11 @@ int main(){
 		printf(" %-20s", list[i].Email);
 		fprintf(fout,"\n %-20s", list[i].Email );
 	}
-	
+
 	fclose(fout);
+
 	return reval;
 }
 	
 	
-	
-	
-	
-
 	

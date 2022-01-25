@@ -46,7 +46,7 @@ void heap_sort(int a[], int n){
 int main(){
 
 	int a[SIZE];
-	time_t t1, t2;
+	//time_t t1, t2;
 	
 	
 	srand(time(NULL));
@@ -54,16 +54,17 @@ int main(){
 		a[i] = rand();
 		printf(" %d", a[i]);
 	}
-	time(&t1);
+	clock_t t1 = clock();
+	//heap_sort(a, SIZE);
 	selection_sort(a,SIZE);
-	time(&t2);
+	clock_t t2 = clock();
 	
 	printf("\n\nsorted array: ");
 	for(int i=0; i<SIZE; i++){
 		printf(" %d", a[i]);
 	}
 	
-	 double durationinseconds = (double) t2-t1;
-	printf("\n time taken: %fs",durationinseconds);
+	 double durationinseconds = (double)(t2-t1) / CLOCKS_PER_SEC;
+	printf("\n time taken: %lfs",durationinseconds);
 	return 0;
 }
