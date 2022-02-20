@@ -1,117 +1,176 @@
-/*-----ADT chaining hash table----*/
-
 #include<stdio.h>
-#include<stdbool.h>
+#include<stdlib.h>
+#include<string.h>
+#define M 26 //hash table size
+#define max 50
+#define numstr 21
 
-#define B 13 //hash table size
+typedef char elementType;
 
-typedef struct nodeTag{
-	int key;
-	struct nodeTag *next;
-}node;
-typedef node* Position;
-typedef Position Dictionary[B];
+typedef struct linkedlist{
+	elementType data[max];
+	struct linkedlist *next;
+}nodeType;
 
-Dictionary D;
+nodeType* bucket[M];
 
-void initBucket(){
-	for(int b = 0; b < B; b++)
-		D[b] = NULL;
+int hash(elementType key[]){
+	return key[0] % 65;
 }
 
-int Search(int x){
-	Position p;
-	int found = 0;
-	p = D[hash(x)];
-	
-	while((p->key==x) && (!found)){
-		if(p->key==x) found++;
-		else p=p->next;
-	}
-	return found;
+void CreateBucket(){
+	int b;
+	for(b = 0; b < M; b++)
+		bucket[b] = NULL;
 }
 
-void InsertSet(int x){
-	int bucket;
-	Position p;
-	if(!Search(x)){	
-		bucket=hash(x);
-		p=D[bucket];
-		
-		D[bucket] = (node*)malloc(sizeof(node));
-		D[bucket]->key = x;
-		D[bucket]->next = p;
-	}
+nodeType *CreateNode(elementType key[]){
+	nodeType *newnode = (nodeType*)malloc(sizeof(nodeType));
+	 strcpy(newnode->data, key);
+   	 newnode->next = NULL;
+	return newnode;
 }
 
-void Delete(int x){
-	int bucket, done;
-	Position p, q;
-	bucket = hash(x);
-	
-	if(D[bucket]!=NULL){
-		if(D[bucket]->key == x){
-			q=D[bucket]->next;
-			free(q);
-		}
-	
+void InsHead(elementType key[], nodeType *head){
+	nodeType *newnode = CreateNode(key);
+	int value = hash(key);
+		newnode->next = bucket[value];
+		bucket[value] = newnode;	
+}
+
+void InsAf(nodeType *prev, elementType key[]){
+	if(prev == NULL)
+		printf("Nut truoc co gia tri NULL");
 	else{
-		done = 0;
-		p = D[bucket];
-		while((p->next!=NULL)&&(!done))
-			if(p->key==x)done = 1;
-			else p=p->next;
-		if(done){
-			q = p->next;
-			p->next = q->next;
-			free(q);
-			}
-		}
+		nodeType *newnode = CreateNode(key);
+		newnode->next = prev->next;
+		prev->next = newnode;
 	}
 }
 
-bool isBucketEmpty(int b){
-	return (D[b] == NULL ? false:true);
+void place(nodeType *head, elementType key[]){
+
+	nodeType *prev = NULL, *cur ;
+	for(cur = head; cur!=NULL && strcmp(key, cur->data)>0; cur = cur->next)
+            prev = cur;
+     
+      if (prev == NULL)//them nut vao dau Buket
+            InsHead(key,head);
+      else
+            InsAf(prev, key);	
 }
 
-bool isEmpty(){
-	for(int b = 0; b < B; b++)
-		if(D[b]!=NULL) return true;
-		return false;	
-}
-
-void clearBucket(int b){
-	Position p,q;
-	q = NULL;
-	p = D[b];
-	while(p!=NULL){
-		q = p;
-		p = p->next;
-		free(q);
+int search(elementType key[]){
+	nodeType *cur;
+	int p = 0, value = hash(key);
+	
+	cur = bucket[value];
+	while(strcmp(key,cur->data)!=0){
+		cur = cur->next;
+		p++;
 	}
-	D[b] = NULL;
+	return p;
 }
 
-void clear(){
-	for(int b = 0; b < B; b++)
-		clearBucket(b);
-}
-
-void duyetBucket(int b){
-	Position p;
-	p = D[b];
-	while(p != NULL){
-		printf("%d", p->key);
-		p=p->next;
+nodeType *DelHead(nodeType *head){
+	if(head == NULL)return NULL;
+	else{
+	nodeType *temp;
+		temp = head->next;
+		free(head);
+	return temp;
 	}
 }
 
-void duyetTable(){
-	for(int b = 0; b<B; b++){
-		printf("\nBucket %d:", b);
-		duyetBucket(b);
+elementType DelAf(nodeType *prev){
+	nodeType *temp;
+	elementType key[max];
+	
+	temp = prev->next;
+	strcpy(key,  temp->data);
+	prev->next = prev->next->next;
+	free(temp);	
+	
+	return *key;
+}
+
+elementType DelKey(elementType key[]){
+	nodeType *cur, *prev = NULL;
+	int value = hash(key);
+	elementType delKey[max];
+	
+	cur = bucket[value];
+//	prev = cur;
+	while(cur!=NULL && strcmp(key, cur->data) != 0){
+		prev = cur;
+		cur = cur->next;
 	}
+	if(cur == NULL)
+		printf("\nKhong co nut de xoa");
+	else{
+	if(cur == bucket[value])
+		bucket[value] = DelHead(bucket[value]);
+	else		
+		 DelAf(prev);
+	}
+	
+}
+
+void freeBucket(nodeType *head){
+	nodeType *cur = NULL, *prev = head;
+	while(prev!=NULL){
+		cur = prev->next;
+		free(prev);
+		prev = cur;
+	}
+}
+
+void freeTable(){
+	for(int b = 0; b < M; b++)
+		freeBucket(bucket[b]);
 }
 
 int main(){
+	int bam;
+	
+	printf("\n---------Hash Table Chainning---------\n");
+	
+	CreateBucket();
+	
+	char s[numstr][max]  = {{"Archer"}, {"Lancer"},{"Rider"},
+							{"Caster"},{"HolyGrail"}, {"Ruler"}, {"Saber"},
+							{"Berseker"},{"Beast"}, {"Foreinger"}, {"AlterEgo"},
+							{"Shielder"}, {"MoonCancer"}, {"Avenger"}, {"Mage"},
+						    {"Priest"}, {"Homunculus"}, {"Orleans"}, {"Einzbern"}, 
+							{"NoblePhantasm"},{"UnlimitedBladesWorks"}};
+	char s2[] = {"Assassin"};
+	
+	place(bucket[hash(s2)],s2);
+	
+	for(int i = 0 ; i < numstr; i++){
+		bam = hash(s[i]);
+		 place(bucket[bam],s[i]);
+	}
+	DelKey(s[13]);
+	printf("\n Da xoa xau %s", s[13]);
+	
+	for(int i = 0; i < M; i++){
+		nodeType *cur = bucket[i];
+		printf("\n%5c: ", i+65);
+		
+		while(cur != NULL){
+			printf( " %s", cur->data);
+			if(cur->next != NULL)printf(",");
+			cur = cur->next;
+		}
+	}
+	int kq = search(s2);
+	if(kq == -1)
+		printf("\nNo such key");
+	else printf("\n %s co tai bucket %c, vi tri %d", s[0] , hash(s[0])+65 , kq);
+	freeTable();	
+	
+		
+	return 0;
 }
+
