@@ -1,4 +1,3 @@
 # C_Basic
-Hello
-Welcome to C_programming
+C_programming at HUST </br>
 LeDucAnhDuy 20200111 
